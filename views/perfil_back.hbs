@@ -1,0 +1,92 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+
+            <h3 class="text-center mb-4">Seus dados:</h3>
+
+            {{!-- Mensagem de erro --}}
+            {{#if mensagem}}
+                <p class="col-12 text-center text-danger">{{mensagem}}</p>
+            {{/if}}
+
+                {{!-- Foto --}}
+            <div class="text-center mt-3">
+                {{#if foto}}
+                    <img src="/uploads/{{foto}}" alt="Foto do usuário" class="img-thumbnail rounded-circle" width="150" height="150">
+                {{else}}
+                    <img src="/images/person.png" alt="Foto padrão" class="img-thumbnail rounded-circle" width="150" height="150">
+                {{/if}}
+            </div>
+
+            <p class="col-12 text-center">Nome: {{nome}}</p>
+            <p class="col-12 text-center">E-mail: {{email}}</p>
+
+            <div class="text-center mt-4">
+                <a class="btn-azul btn-custom" href="/usuario/atualizar">Editar Perfil</a>
+            </div>
+
+            <hr>
+
+            <h4 class="text-center mt-4"> Suas viagens ({{total}})</h4>
+            <div class="text-center mt-4">
+                <a class="btn-azul btn-custom" href="/rotas/viagens">Consultar Viagens</a>
+            </div>
+            
+            <h4 class="text-center mt-4">Seus veículos:</h4>
+
+            {{!-- Lista de veículos --}}
+            {{#if veiculos.length}}
+                {{#each veiculos}}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-8 text-center">
+                            <p class="mb-0">{{this.modelo}} - {{this.placa}}</p>
+                        </div>
+
+                        <div class="col-4 text-center">
+
+                            <form class="d-inline" action="/combutivel/gerenciar" method="post">
+                                <input type="hidden" name="id" value="{{this.idtb_veiculo}}">
+                                <button class="btn btn-primary  btn-iconne" type="submit" data-bs-toggle="tooltip" title="Gerenciar Combustíveis">
+                                    <img src="/images/gerenciar.svg" alt="Gerenciar Combustíveis" width="20" height="20">
+                                </button>
+
+                            </form>
+                            <form class="d-inline" action="/veiculo/atualizar" method="post">
+                                <input type="hidden" name="id" value="{{this.idtb_veiculo}}">
+                                <button class="btn btn-primary btn-iconne" type="submit" data-bs-toggle="tooltip" title="Editar veículo">
+                                    <img src="/images/editar.svg" alt="Editar" width="20" height="20">
+                                </button>
+                            </form>
+
+
+
+                            <form class="d-inline" action="/veiculo/deletar" method="post">
+                                <input type="hidden" name="id" value="{{this.idtb_veiculo}}">
+                                <button class="btn btn-danger btn-iconne" type="submit" data-bs-toggle="tooltip" title="Excluir veículo">
+                                    <img src="/images/delete.png" alt="Deletar" width="20" height="20">
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                {{/each}}
+            {{else}}
+                <p class="text-center">Nenhum veículo cadastrado ainda.</p>
+            {{/if}}
+
+            <div class="text-center mt-4">
+                <a class="btn-azul btn-custom" href="/veiculo/cadastrar_veiculo">+ Adicionar veículo</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
+</script>

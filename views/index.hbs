@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+
+    <link rel="stylesheet" href="./stylesheets/autocompletar.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/navBar.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  </head>
+
+  <body>
+    <main class="app-container">
+      <aside class="sidebar">
+          
+<div class="sidebar-body p-3">
+          <h5 class="mb-3">Criar Percurso</h5>
+          
+          <form action="/rotas/resumo" method="POST">
+            <div class="mb-2">
+              <label class="form-label" for="partida">Início</label>
+              <input id="partida" class="form-control" type="text" name="partida" required placeholder="Digite o endereço de partida" autocomplete="on" />
+              <div id="dropdown-partida" class="dropdown-container"></div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label" for="parada1">Parada 1</label>
+              <input id="parada1" class="form-control" type="text" name="parada1" placeholder="Digite a parada 1" autocomplete="on" />
+              <div id="dropdown-parada1" class="dropdown-container"></div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label" for="parada2">Parada 2</label>
+              <input id="parada2" class="form-control" type="text" name="parada2" placeholder="Digite a parada 2" autocomplete="on" />
+              <div id="dropdown-parada2" class="dropdown-container"></div>
+            </div>
+
+            <div id="container-paradas"></div>
+
+            <div class="mb-2 row align-items-center">
+              <div class="col-sm-8">
+                <label class="form-label" style="display: flex; align-items: center; margin-bottom: 0;">
+                  <input class="form-check-input" type="checkbox" id="meuCheckbox" name="meuCheckbox" value="sim" style="margin-right: 5px;" />
+                  <span>Voltar ao inicio</span>
+                </label>
+              </div>
+
+              <div class="col-sm-4" style="text-align: right;">
+                <button id="add-parada" class="btn btn-light rounded-circle btn-iconne" type="button">
+                  <img src="/images/add.png" alt="add" width="20" height="20">
+                </button>
+              </div>
+            </div>
+
+
+            <div class="mb-4">
+              <span class="d-block mb-2">Minimizar:</span>
+              <div class="d-flex gap-3">
+                <label><input type="radio" name="minimizar" value="0"> Tempo</label>
+                <label><input type="radio" name="minimizar" value="1"> Distância</label>
+              </div>
+            </div>
+
+            <div class="mb-2" style="text-align: center;">
+              <button class="btn-Rota" type="submit">CALCULAR ROTA</button>
+            </div>
+          </form>
+          </div>
+        </aside>
+
+          <section class="map-container">
+            <div id="map"></div>
+            <div id="spinner-overlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); display:flex; align-items:center; justify-content:center; z-index:9999;">
+              <img src="/gif/Spinner-2.gif" alt="Carregando..." />
+            </div>
+            <div id="info-rota-card" class="fechado">
+                <button id="toggle-card" title="Ver informações">📍</button>
+
+                <div id="conteudo-card">
+                  <button id="btn-fechar">×</button>
+                  <p id="dist">
+                    <span id="label-tipo">Distância</span>: <span id="distancia"></span>
+                  </p>
+                  <div id="ordem"></div>
+                  <div id="exportar"></div>
+                </div>
+              </div>
+          </section>
+            
+
+      
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script type="module" src="/js/adicionarParadas.js"></script>
+    <script type="module" src="/js/localizar.js"></script>
+    <script type="module" src="/js/chamar.js"></script>
+
+    <script type="module">
+      document.addEventListener('DOMContentLoaded', () => {
+        const card = document.getElementById('info-rota-card');
+        const btnFechar = document.getElementById('btn-fechar');
+        const btnAbrir = document.getElementById('toggle-card');
+
+        // Função para abrir
+        btnAbrir.addEventListener('click', (e) => {
+          e.stopPropagation(); // Evita conflitos de clique
+          card.classList.remove('fechado');
+        });
+
+        // Função para fechar
+        btnFechar.addEventListener('click', () => {
+          card.classList.add('fechado');
+        });
+      });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form[action="/rotas/resumo"]');
+        const spinnerOverlay = document.getElementById('spinner-overlay');
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          spinnerOverlay.style.display = 'flex';
+
+          const formData = new FormData(form);
+          const minimizarSelecionado = document.querySelector('input[name="minimizar"]:checked');
+          let valor = minimizarSelecionado ? minimizarSelecionado.value : null;
+
+          try {
+            const response = await fetch('/rotas/resumo', { method: 'POST', body: formData });
+
+            if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+
+            const paradas = await response.json();
+            const { iniciarChamadas } = await import('/js/chamadasAPI.js');
+            const resultado = await iniciarChamadas(paradas);
+
+            if (!resultado || isNaN(parseFloat(resultado.distancia))) {
+              throw new Error('Distância não recebida corretamente do backend');
+            }
+
+            const { caminho, distancia, ordem } = resultado;
+
+            console.log(caminho)
+
+            if (valor == 1) {
+              document.getElementById("label-tipo").textContent = "Distância";
+              document.getElementById('distancia').textContent = `${distancia.toFixed(2)} km`;
+            } else {
+            let novaDistancia=distancia/60
+            let minutosS=Math.floor(distancia / 60);
+            let segundos = (distancia % 60).toFixed(2);
+            let resultadoM = minutosS.toString().padStart(2, '0') + ":" + segundos.toString().padStart(2, '0');
+            let medida="minuntos";
+            document.getElementById("label-tipo").textContent = "Tempo";            if(novaDistancia>=60){
+                novaDistancia=novaDistancia/60
+                let horas= Math.floor(novaDistancia)
+                let minutos=Math.round((novaDistancia-horas)*60);
+                let resultado=horas+":"+minutos.toString().padStart(2, '0');
+                novaDistancia=resultado
+                medida="horas";
+
+            }else{
+              novaDistancia=resultadoM;
+            }
+              document.getElementById('distancia').textContent = `${novaDistancia} ${medida}`;
+            }
+
+            const divOrdem = document.getElementById('ordem');
+            divOrdem.innerHTML = '<h6>Ordem das Paradas:</h6>';
+
+            const lista = document.createElement('ol');
+            ordem.forEach(indice => {
+              const li = document.createElement('li');
+              li.textContent = paradas[indice];
+              lista.appendChild(li);
+            });
+            divOrdem.appendChild(lista);
+
+            const { criarMapaRota } = await import('/js/mapaLogica.js');
+            setTimeout(() => {
+              criarMapaRota(caminho);
+              spinnerOverlay.style.display = 'none';
+            }, 100);
+
+          } catch (error) {
+            console.error('Erro ao processar rota:', error);
+            spinnerOverlay.style.display = 'none';
+            alert('Erro ao calcular a rota.');
+          }
+        });
+      });
+    </script>
+
+    <script>
+      // Cookies
+      function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+      }
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        return parts.length === 2 ? parts.pop().split(';').shift() : null;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const checkbox = document.getElementById('meuCheckbox');
+        const radios = document.querySelectorAll('input[name="minimizar"]');
+
+        const voltarInicio = getCookie('voltarInicio');
+        
+        // AQUI: Se getCookie retornar null, '1' será o valor usado
+        const minimizar = getCookie('minimizar') || '1'; 
+
+        if (voltarInicio === 'sim') checkbox.checked = true;
+
+        // Como 'minimizar' agora sempre terá um valor (do cookie ou o padrão '1'),
+        // ele sempre marcará um dos rádios ao carregar a página.
+        radios.forEach(r => {
+          if (r.value === minimizar) r.checked = true;
+        });
+
+        // ... restante dos listeners de change ...
+        checkbox.addEventListener('change', () => {
+          setCookie('voltarInicio', checkbox.checked ? 'sim' : 'nao', 30);
+        });
+
+        radios.forEach(radio => {
+          radio.addEventListener('change', () => {
+            setCookie('minimizar', radio.value, 30);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,107 @@
+<style>
+    body {
+        background-color: #999999; /* Cor cinza do fundo da página */
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+    }
+    .btn-login {
+        background-color: transparent;
+        border: 2px solid white;
+        color: white;
+        border-radius: 15px;
+        padding: 8px 0;
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+        display: block;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: 0.3s;
+    }
+
+    .btn-login:hover {
+        background-color: white;
+        color: black;
+    }
+     .login-card {
+        background-color: var(--bg-dark);
+        padding: 40px 60px;
+        border-radius: 30px;
+        width: 100%;
+        max-width: 500px;
+        color: var(--text-white);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .logo-container_img {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .logo-container_img img {
+        width: 180px; /* Ajuste conforme sua imagem */
+    }
+</style>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 card-cadastro">
+            
+            <div class="logo-container_img">
+                <img src="/images/otimiroute _branco_png.png" alt="OtimiRoute">
+
+            </div>
+
+            <form action="/usuario/cadastro" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Nome</label>
+                            <input type="text" name="nome" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="tel" name="telefone" id="telefone" class="form-control" required>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="/usuario/login" class="login-link">Já tem uma conta? <b>Realize login já</b></a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Senha</label>
+                            <input type="password" name="senha" id="senha" class="form-control" required>
+                            <p id="necessario" class="text-danger small"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirme a Senha</label>
+                            <input type="password" name="senha2" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Foto de Perfil</label>
+                            <input type="file" name="foto" class="form-control" accept=".jpg,.jpeg,.png">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-login">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script type="module" src="/js/verificaSenha.js"></script>
+<script type="module" src="/js/senha_apenas_um.js"></script>
+<script src="/js/formatar_telefone.js"></script>
+

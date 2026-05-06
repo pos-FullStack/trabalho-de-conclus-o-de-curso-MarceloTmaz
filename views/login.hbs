@@ -1,0 +1,154 @@
+<style>
+    :root {
+        --bg-dark: #001f33; /* Azul escuro do fundo do card */
+        --input-bg: #ffffff;
+        --text-white: #ffffff;
+    }
+
+    body {
+        background-color: #999999; /* Cor cinza do fundo da página */
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+    }
+
+    .login-card {
+        background-color: var(--bg-dark);
+        padding: 40px 60px;
+        border-radius: 30px;
+        width: 100%;
+        max-width: 500px;
+        color: var(--text-white);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .logo-container_img {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .logo-container_img img {
+        width: 180px; /* Ajuste conforme sua imagem */
+    }
+
+    .form-label {
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border-radius: 15px;
+        height: 45px;
+        border: none;
+        margin-bottom: 20px;
+    }
+
+    .options-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        margin-bottom: 30px;
+    }
+
+    .options-row a {
+        color: var(--text-white);
+        text-decoration: none;
+    }
+
+    .form-check-input {
+        background-color: white;
+        border: none;
+        width: 1.2em;
+        height: 1.2em;
+        margin-top: 0;
+        cursor: pointer;
+    }
+
+    .btn-login {
+        background-color: transparent;
+        border: 2px solid white;
+        color: white;
+        border-radius: 15px;
+        padding: 8px 0;
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+        display: block;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: 0.3s;
+    }
+
+    .btn-login:hover {
+        background-color: white;
+        color: var(--bg-dark);
+    }
+
+    .footer-link {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 0.9rem;
+    }
+
+    .footer-link a {
+        color: white;
+        text-decoration: none;
+    }
+</style>
+
+<div class="login-card">
+    <div class="logo-container_img">
+        <img src="/images/otimiroute _branco_png.png" alt="OtimiRoute">
+    </div>
+
+    {{#if mensagem}}
+        <p class="text-center" style="color: #ff6b6b; font-weight: bold;">{{mensagem}}</p>
+    {{/if}}
+
+    <form action="/usuario/login" method="POST">
+        
+        <div class="mb-3">
+            <label class="form-label">Usuário</label>
+            <input 
+                class="form-control"
+                type="email"
+                name="email"
+                required
+            >
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Senha</label>
+            <input 
+                class="form-control"
+                type="password"
+                name="senha"
+                required
+            >
+        </div>
+
+        <div class="options-row">
+            
+            <div class="form-check d-flex align-items-center gap-2">
+                <input class="form-check-input" type="checkbox" id="meuCheckbox" name="meuCheckbox" value="sim">
+                <label class="form-check-label mb-0" for="meuCheckbox">
+                    PERMANECER CONECTADO
+                </label>
+            </div>
+        </div>
+
+        <button class="btn btn-login" type="submit">Login</button>
+
+    </form>
+
+    <div class="footer-link">
+        <p>Não tem uma conta? <a href="/usuario/cadastrar"><strong>Registre-se já</strong></a></p>
+                    <a href="/usuario/esqueci_senha">Esqueceu a senha?</a>
+
+    </div>
+</div>

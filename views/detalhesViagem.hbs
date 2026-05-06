@@ -1,0 +1,75 @@
+
+<style>
+    body {
+    background-color: #001f33; /* Azul bem escuro */
+    color: white;
+}
+    .detalhe-lista {
+        list-style: none;
+        padding-left: 0;
+        font-size: 1.4rem; /* Tamanho maior conforme a imagem */
+        font-weight: 300;
+        line-height: 2;
+        margin-bottom: 30px;
+    }
+
+    .info-km {
+        display: flex;
+        gap: 50px;
+        font-size: 1.3rem;
+        margin-bottom: 40px;
+        color: white;
+    }
+
+    .btn-voltar {
+        border: 1px solid white;
+        background: transparent;
+        color: white;
+        border-radius: 8px;
+        padding: 8px 30px;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s;
+    }
+
+    .btn-voltar:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+</style>
+
+<div class="bg-dark-custom">
+    <div class="container" style="margin-top: 100px;">
+        
+        
+        <div class="otimi-card">
+            <h3>Detallhes</h3>
+            {{#if viagem.length}}
+                
+                <div class="p-4">
+                    <ul class="detalhe-lista">
+                        <li>1- {{inicio.endereco}}</li>
+
+                        {{#each paradas}}
+                            <li>{{add @index 2}}- {{this.endereco}}</li>
+                        {{/each}}
+
+                        <li>{{add paradas.length 2}}- {{fim.endereco}}</li>
+                    </ul>
+
+                    
+
+                    <a href="/rotas/viagens" class="btn-voltar">
+                        Voltar
+                    </a>
+                </div>
+
+            {{else}}
+                <div class="text-center py-5">
+                    <p style="color: rgba(255,255,255,0.5);">Nenhuma rota encontrada para esta viagem.</p>
+                    <a href="/rotas/viagens" class="btn-voltar mt-3">Voltar</a>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>

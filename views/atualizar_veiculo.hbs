@@ -1,0 +1,82 @@
+
+<style>
+    body {
+    background-color: #001f3f !important; /* O azul escuro do OtimiRoute */
+}
+/* Estilo do Container e Inputs conforme a imagem */
+.card-dark {
+    background-color: #001f33 !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 15px;
+}
+
+.input-custom {
+    background-color: #d9d9d9 !important; /* Cinza claro da imagem */
+    border: none !important;
+    border-radius: 8px !important;
+    color: #333 !important;
+    height: 45px;
+}
+
+/* Botão Outline Branco */
+.btn-outline-custom {
+    color: white !important;
+    background: transparent !important;
+    border: 1px solid white !important;
+    border-radius: 10px !important;
+    transition: 0.3s;
+}
+
+.btn-outline-custom:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ajuste nos Radio e Checkbox para aparecerem no fundo escuro */
+.form-check-input {
+    border-color: white !important;
+}
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <h3 class="text-center mb-4" style="color: #ffffff;">Por favor, insira seus dados:</h3>
+        <div class="col-md-8">
+            <div class="card card-dark p-4 shadow-lg">
+                
+                <form action="/veiculo/atualizar_v" method="POST">
+                    <input type="hidden" name="id" value="{{id}}">
+
+                    <div class="mb-3">
+                        <label class="form-label text-white fs-5">Modelo</label>
+                        <input type="text" class="form-control input-custom" name="modelo" placeholder="Modelo" value="{{modelo}}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-white fs-5">Placa</label>
+                        <input type="text" class="form-control input-custom" id="placa" name="placa" placeholder="XXX0X00" value="{{placa}}" required>
+                    </div>
+
+                    
+
+                    <div class="col-12 text-center">
+                        
+                        <button class="btn btn-outline-custom w-50 py-2" type="submit">
+                            Salvar
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.combustiveisBack = {{{json busca}}};
+    window.combustiveis = 1;
+    window.ultimoId = 1;
+</script>
+<script src="/js/placa.js"></script>
+
+
+

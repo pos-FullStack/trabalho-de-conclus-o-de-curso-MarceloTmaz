@@ -1,0 +1,147 @@
+<style>
+
+    /* Cor de fundo idêntica à imagem */
+body {
+    background-color: #001f33; /* Azul bem escuro */
+}
+
+/* Estilo dos Cards */
+.card-dark {
+    background-color: transparent !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 20px !important;
+}
+
+.border-custom {
+    border: 1px solid #ffffff !important;
+}
+
+/* Botões com estilo da imagem (Borda branca, fundo transparente) */
+.btn-outline-custom {
+    color: white !important;
+    background: transparent !important;
+    border: 1px solid white !important;
+    border-radius: 10px !important;
+    text-transform: none;
+    transition: 0.3s;
+}
+
+.btn-outline-custom:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #cccccc !important;
+}
+
+.btn-outline-delete {
+    color: red !important;
+    background: transparent !important;
+    border: 1px solid red !important;
+    border-radius: 10px !important;
+    text-transform: none;
+    transition: 0.3s;
+}
+
+.btn-outline-delete:hover {
+    background: rgba(255, 0, 0, 0.1) !important;
+    border-color: #red !important;
+}
+
+/* Ajustes de texto */
+h4, h5, h2 {
+    color: white !important;
+}
+
+.opacity-75 {
+    opacity: 0.75;
+}
+</style>
+
+
+<div class="container" style="margin-top: 100px;" >
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card card-dark shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        {{#if usuario.foto}}
+                            <img src="/uploads/{{usuario.foto}}" alt="Foto de {{usuario.nome}}" class="rounded-circle" width="130" height="130" style="object-fit: cover; border: 4px solid #ffffff;">
+                        {{else}}
+                            <img src="/images/person.png" alt="Foto padrão" class="rounded-circle" width="130" height="130" style="object-fit: cover; border: 4px solid #ffffff;">
+                        {{/if}}
+                    </div>
+                    
+                    <h4 class="fw-bold mb-1 text-white">{{usuario.nome}}</h4>
+                    <p class="text-light opacity-75 mb-3">{{usuario.email}}</p>
+                    
+                    <a class="btn btn-outline-custom btn-sm w-100 rounded-pill mb-2" href="/usuario/atualizar">EDITAR</a>
+                    <a class="btn btn-outline-custom btn-sm w-100 rounded-pill" href="/usuario/logout">sair</a>
+                </div>
+            </div>
+
+            <div class="card card-dark border-custom">
+                <div class="card-body d-flex justify-content-between align-items-center py-4">
+                    <h5 class="card-title text-white mb-0">Total Viagem</h5>
+                    <h2 class="fw-bold text-white mb-0 mx-3">{{totalViagens}}</h2>
+                    <a href="/rotas/viagens" class="btn btn-outline-custom btn-sm rounded-pill px-3">Ver ultimas viagens</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card card-dark h-100 border-custom">
+                <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-white">Meus Veículos</h5>
+                    <a class="btn btn-outline-custom btn-sm rounded-pill px-3" href="/veiculo/cadastrar_veiculo">Cadastrar Veiculo</a>
+                </div>
+                
+                <div class="card-body px-4">
+                    <div class="row text-light opacity-75 fw-bold mb-2 d-none d-md-flex">
+                        <div class="col-4">Modelo</div>
+                        <div class="col-3">Placa</div>
+                        <div class="col-5 text-center">Ações</div>
+                    </div>
+                    <hr class="border-light opacity-25 mt-0">
+                    
+                    {{#if veiculos.length}}
+                       {{#each veiculos}}
+                            <div class="row align-items-center mb-4 py-3 border-bottom border-light border-opacity-10">
+                                <div class="col-12 col-md-7 mb-3 mb-md-0">
+                                    <div class="d-flex flex-column flex-md-row align-items-md-center">
+                                        <div class="me-md-4">
+                                            <small class="text-muted d-block d-md-none">Modelo</small>
+                                            <span class="text-white fs-5 fw-bold">{{this.modelo}}</span>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block d-md-none">Placa</small>
+                                            <span class="text-white fs-5">{{this.placa}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-5">
+                                    <div class="d-flex flex-wrap justify-content-md-end justify-content-start gap-2">
+                                        <form action="/combustivel/gerenciar" method="post" class="m-0">
+                                            <input type="hidden" name="id" value="{{this.idtb_veiculo}}">
+                                            <button class="btn btn-outline-custom btn-sm px-3 rounded-pill">Gerenciar</button>
+                                        </form>
+                                        <form action="/veiculo/atualizar" method="post" class="m-0">
+                                            <input type="hidden" name="id" value="{{this.idtb_veiculo}}">
+                                            <button class="btn btn-outline-custom btn-sm px-3 rounded-pill">Editar</button>
+                                        </form>
+                                        <form action="/veiculo/deletar" method="post" class="m-0">
+                                            <input type="hidden" name="id" value="{{this.idtb_veiculo}}">
+                                            <button class="btn btn-outline-delete btn-sm px-3 rounded-pill">Deletar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+                    {{else}}
+                        <div class="text-center py-5 text-muted">
+                            <p>Nenhum veículo cadastrado para este perfil.</p>
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

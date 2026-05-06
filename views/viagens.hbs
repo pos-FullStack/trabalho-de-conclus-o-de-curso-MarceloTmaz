@@ -1,0 +1,92 @@
+<style>
+    body {
+    background-color: #001f33; /* Azul bem escuro */
+    color:white;
+}
+    .viagem-row {
+        display: grid;
+        grid-template-columns: 1.5fr 1.5fr 0.8fr 1fr; /* Ajuste das colunas */
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+
+    .viagem-header {
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.7);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    .btn-detalhe {
+        border: 1px solid white;
+        background: transparent;
+        color: white;
+        border-radius: 8px;
+        padding: 5px 15px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: 0.3s;
+        text-align: center;
+    }
+
+    .btn-detalhe:hover {
+        background: white;
+        color: #001f3f;
+    }
+
+    .data-group-title {
+        color: #60a5fa; /* Azul claro para destacar a data */
+        margin-top: 30px;
+        font-size: 1.1rem;
+        font-weight: 300;
+    }
+</style>
+
+<div class="bg-dark-custom">
+    <div class="container" style="margin-top: 100px;">
+        
+
+        <div class="otimi-card">
+            <h3 class="text-center mb-4" style="font-weight: 300;">Histórico de Viagens</h3>
+
+            {{#if viagensPorData}}
+                {{#each viagensPorData}}
+                    
+                    <div class="data-group-title">Viagens em {{@key}}</div>
+                    
+                    <div class="viagem-row viagem-header mt-2">
+                        <div class="text-center">Origem</div>
+                        <div class="text-center">KM</div>
+                        <div></div> </div>
+
+                    {{#each this}}
+                        <div class="viagem-row">
+                            <div class="text-center">{{origem}}</div>
+                            
+                            <div class="text-center">
+                                {{#if distancia}}
+                                    {{distancia}}
+                                {{else}}
+                                    0.0
+                                {{/if}}
+                            </div>
+                            <div class="text-end">
+                                <a href="/rotas/viagens/{{idtb_viagem}}" class="btn-detalhe">
+                                    Detalhe
+                                </a>
+                            </div>
+                        </div>
+                    {{/each}}
+
+                {{/each}}
+            {{else}}
+                <div class="text-center py-5">
+                    <p style="color: rgba(255,255,255,0.5);">Nenhuma viagem encontrada.</p>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/navBar.css" />
+    <link rel="stylesheet" href="./stylesheets/autocompletar.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+
+
+
+<main class="app-container">
+    <aside class="sidebar">
+        <h4 class="text-center">Bem Vindo {{nome}}</h4>
+        <div class="sidebar-header d-flex justify-content-between align-items-center p-3">
+            <h5 class="mb-0">Criar Percurso</h5>
+        </div>
+
+        <div class="sidebar-body p-3">
+            <form action="/rotas/resumo" method="POST">
+
+                <div class="mb-2">
+                    <label class="form-label" for="partida">Início</label>
+                    <input id="partida" class="form-control" type="text" name="partida" required placeholder="Digite o endereço de partida" />
+                    <div id="dropdown-partida" class="dropdown-container"></div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label" for="parada1">Parada 1</label>
+                    <input id="parada1" class="form-control" type="text" name="parada1" placeholder="Digite a parada 1" />
+                    <div id="dropdown-parada1" class="dropdown-container"></div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label" for="parada2">Parada 2</label>
+                    <input id="parada2" class="form-control" type="text" name="parada2" placeholder="Digite a parada 2" autocomplete="on" />
+                    <div id="dropdown-parada2" class="dropdown-container"></div>
+                </div>
+
+                <div id="container-paradas"></div>
+
+            <div class="mb-2" style="text-align: right;">
+               <button id="add-parada" class="btn btn-light rounded-circle btn-iconne" type="button">
+                  <img src="/images/add.png" alt="add" width="20" height="20">
+                </button>
+            </div>
+           
+
+            <div class="mb-2" style="text-align: right;">
+              <label class="form-label" style="display: flex; justify-content: flex-end; align-items: center;">
+                <input class="form-check-input" type="checkbox" id="meuCheckbox" name="meuCheckbox" value="sim" />
+                
+                <span style="margin-right: 5px;">Voltar ao inicio</span>
+              </label>
+            </div>
+             <div class="row">
+                <div class="col-12" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+  
+                  <span class="form-label" style="margin: 0; font-weight: bold;">Minimizar:</span>
+
+                  <div style="display: flex; gap: 15px; align-items: center;">
+                    
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin: 0;">
+                      <input type="radio" class="form-check-input" name="minimizar" value="0" required style="margin: 0;">
+                      <span>Tempo</span>
+                    </label>
+
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin: 0;">
+                      <input type="radio" class="form-check-input" name="minimizar" value="1" required style="margin: 0;">
+                      <span>Distância</span>
+                    </label>
+                    
+                  </div>
+                </div>
+
+              
+            </div>
+
+
+                <div class="mb-2">
+                    <label class="form-label" for="veiculo">Selecione o veículo</label>
+                    <select id="veiculo" class="form-select" name="veiculo">
+                        <option value="">-- escolha um veículo --</option>
+                    </select>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label" for="combustivel">Selecione o combustível</label>
+                    <select id="combustivel" class="form-select" name="combustivel" disabled>
+                        <option value="">-- escolha o combustível --</option>
+                    </select>
+                </div>
+
+            <div class="mb-2" style="text-align: center;">
+              <button class="btn-Rota" type="submit">CALCULAR ROTA</button>
+            </div>
+
+            </form>
+
+            <hr />
+
+            
+
+        </div>
+    </aside>
+
+    <section class="map-container">
+        <div id="map"></div>
+
+        <div id="spinner-overlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); display:flex; align-items:center; justify-content:center; z-index:9999;">
+            <img src="/gif/Spinner-2.gif" alt="Carregando..." />
+        </div>
+
+         <div id="info-rota-card" class="fechado">
+                <button id="toggle-card" title="Ver informações">📍</button>
+
+                <div id="conteudo-card">
+                  <button id="btn-fechar">×</button>
+                  
+                <div id="teste">
+                <p id="dist">
+                    <span id="label-tipo">Distância</span>: <span id="distancia">—</span>
+                </p>
+                <p>Custo (aproximado): <span id="custo">—</span></p>
+                <div id="exportar" class="mb-2"></div>
+            </div>
+
+            <div id="ordem"></div>
+            </div>
+              </div>
+
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script type="module" src="/js/adicionarParadas.js"></script>
+<script type="module" src="/js/localizar.js"></script>
+<script type="module" src="/js/chamar.js"></script>
+
+<script>
+    const card = document.getElementById("info-rota-card");
+    const btnToggle = document.getElementById("toggle-card");
+    const btnFechar = document.getElementById("btn-fechar");
+
+    // Abrir o card ao clicar no ícone
+    btnToggle.addEventListener("click", () => {
+        card.classList.remove("fechado");
+    });
+
+    // Fechar o card ao clicar no X
+    btnFechar.addEventListener("click", () => {
+        card.classList.add("fechado");
+    });
+    // veiculosComCombustiveis vindo do back:
+    const veiculos = {{{json veiculosComCombustiveis}}};
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const selectVeiculo = document.getElementById("veiculo");
+        const selectCombustivel = document.getElementById("combustivel");
+
+        let primarioVeiculo = false;
+
+        veiculos.forEach(v => {
+            const opt = document.createElement("option");
+            opt.value = v.idtb_veiculo;
+            opt.textContent = `${v.modelo} - ${v.placa}`;
+
+            if (v.primario === 1 && !primarioVeiculo) {
+                opt.selected = true;
+                primarioVeiculo = true;
+            }
+
+            selectVeiculo.appendChild(opt);
+        });
+
+        function carregarCombustiveis(idVeiculo) {
+            selectCombustivel.innerHTML = '<option value="">-- escolha o combustível --</option>';
+            const escolhido = veiculos.find(v => v.idtb_veiculo == idVeiculo);
+
+            if (escolhido) {
+                let primario = false;
+
+                const lista = Array.isArray(escolhido.combustiveis[0])
+                    ? escolhido.combustiveis[0]
+                    : escolhido.combustiveis;
+
+                lista.forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c.idtb_combutivel;
+                    opt.textContent = `${c.tipo_combustivel} (R$${c.preco.toFixed(2)}/L - ${c.consumo_km} km/L)`;
+
+                    if (c.e_primario === 1 && !primario) {
+                        opt.selected = true;
+                        primario = true;
+                    }
+
+                    selectCombustivel.appendChild(opt);
+                });
+
+                selectCombustivel.disabled = false;
+            } else {
+                selectCombustivel.disabled = true;
+            }
+        }
+
+        selectVeiculo.addEventListener("change", () => {
+            carregarCombustiveis(selectVeiculo.value);
+        });
+
+        const veiculoPrimario = veiculos.find(v => v.primario === 1);
+        if (veiculoPrimario) {
+            carregarCombustiveis(veiculoPrimario.idtb_veiculo);
+        }
+    });
+</script>
+
+<script type="module">
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector('form[action="/rotas/resumo"]');
+    const spinnerOverlay = document.getElementById("spinner-overlay");
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        spinnerOverlay.style.display = "flex";
+
+        const formData = new FormData(form);
+        const minimizarSelecionado = document.querySelector('input[name="minimizar"]:checked');
+        let valor = minimizarSelecionado ? minimizarSelecionado.value : null;
+
+        try {
+            const response = await fetch("/rotas/resumo", { method: "POST", body: formData });
+
+            if (!response.ok) throw new Error("Erro HTTP " + response.status);
+
+            const paradas = await response.json();
+            const { iniciarChamadas } = await import("/js/chamadasAPI.js");
+            const resultado = await iniciarChamadas(paradas);
+
+            if (!resultado || isNaN(parseFloat(resultado.distancia))||isNaN(parseFloat(resultado.km))) {
+                throw new Error("Distância inválida");
+            }
+
+            const { caminho, distancia, ordem,km } = resultado;
+            let dista=distancia;
+            if (valor == 1) {
+              document.getElementById("label-tipo").textContent = "Distância";
+              document.getElementById('distancia').textContent = `${distancia.toFixed(2)} km`;
+            } else {
+            let novaDistancia=distancia/60
+            dista=novaDistancia;
+            let minutosS=Math.floor(distancia / 60);
+            let segundos = (distancia % 60);
+            let resultadoM = minutosS.toString().padStart(2, '0') + ":" + segundos.toString().padStart(2, '0');
+            let medida="minuntos";
+            document.getElementById("label-tipo").textContent = "Tempo";      
+            if(novaDistancia>=60){
+                novaDistancia=novaDistancia/60
+                let horas= Math.floor(novaDistancia)
+                let minutos=Math.round((novaDistancia-horas)*60);
+                let resultado=horas+":"+minutos.toString().padStart(2, '0');
+                novaDistancia=resultado
+                medida="horas";
+
+            }else{
+              novaDistancia=resultadoM;
+            }
+              document.getElementById('distancia').textContent = `${novaDistancia} ${medida}`;
+            }
+            const divOrdem = document.getElementById("ordem");
+            divOrdem.innerHTML = "<h6>Ordem das Paradas:</h6>";
+
+            const lista = document.createElement("ol");
+            ordem.forEach(i => {
+                const li = document.createElement("li");
+                li.textContent = paradas[i];
+                lista.appendChild(li);
+            });
+            divOrdem.appendChild(lista);
+
+            const combustivelSelect = document.getElementById("combustivel");
+            const texto = combustivelSelect.options[combustivelSelect.selectedIndex].textContent;
+            const regex = /R\$(\d+(\.\d+)?).*?(\d+(\.\d+)?)\s*km\/L/;
+            const match = texto.match(regex);
+
+            if (match) {
+                const preco = parseFloat(match[1]);
+                const consumo = parseFloat(match[3]);
+
+                const litros = km / consumo;
+                const custo = litros * preco;
+
+                document.getElementById("custo").textContent = `R$ ${custo.toFixed(2)}`;
+            } else {
+                document.getElementById("custo").textContent = "—";
+            }
+
+            const { criarMapaRota } = await import("/js/mapaLogica.js");
+            setTimeout(() => {
+                criarMapaRota(caminho);
+                spinnerOverlay.style.display = "none";
+            }, 100);
+
+            const paradasOrdenadas = ordem.map(i => paradas[i]);
+
+            await fetch("/rotas/salvar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    origem: paradas[0],
+                    distancia: dista,
+                    paradas: paradasOrdenadas
+                })
+            });
+
+        } catch (e) {
+            console.error(e);
+            spinnerOverlay.style.display = "none";
+            alert("Erro ao calcular a rota.");
+        }
+    });
+});
+</script>
+
+<script>
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+}
+
+function getCookie(name) {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    return parts.length === 2 ? parts.pop().split(";").shift() : null;
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkbox = document.getElementById('meuCheckbox');
+        const radios = document.querySelectorAll('input[name="minimizar"]');
+
+        const voltarInicio = getCookie('voltarInicio');
+        
+        // AQUI: Se getCookie retornar null, '1' será o valor usado
+        const minimizar = getCookie('minimizar') || '1'; 
+
+        if (voltarInicio === 'sim') checkbox.checked = true;
+
+        // Como 'minimizar' agora sempre terá um valor (do cookie ou o padrão '1'),
+        // ele sempre marcará um dos rádios ao carregar a página.
+        radios.forEach(r => {
+          if (r.value === minimizar) r.checked = true;
+        });
+
+        // ... restante dos listeners de change ...
+        checkbox.addEventListener('change', () => {
+          setCookie('voltarInicio', checkbox.checked ? 'sim' : 'nao', 30);
+        });
+
+        radios.forEach(radio => {
+          radio.addEventListener('change', () => {
+            setCookie('minimizar', radio.value, 30);
+          });
+        });
+      });
+</script>
+
+</body>
+</html>

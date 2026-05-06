@@ -1,0 +1,181 @@
+<style>
+    body {
+    background-color: ##001f3f !important; /* O azul escuro do OtimiRoute */
+}
+/* Estilo do Container e Inputs conforme a imagem */
+.card-dark {
+    background-color: #001f33 !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 15px;
+}
+
+.input-custom {
+    background-color: #d9d9d9 !important; /* Cinza claro da imagem */
+    border: none !important;
+    border-radius: 8px !important;
+    color: #333 !important;
+    height: 45px;
+}
+
+/* Botão Outline Branco */
+.btn-outline-custom {
+    color: white !important;
+    background: transparent !important;
+    border: 1px solid white !important;
+    border-radius: 10px !important;
+    transition: 0.3s;
+}
+
+.btn-outline-custom:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ajuste nos Radio e Checkbox para aparecerem no fundo escuro */
+.form-check-input {
+    border-color: white !important;
+}
+    /* Estilização baseada na imagem */
+    .bg-dark-custom {
+        background-color: #001f3f; /* Azul marinho profundo da imagem */
+        min-height: 100vh;
+        color: white;
+        padding: 20px;
+        font-family: sans-serif;
+    }
+
+    .otimi-card {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-label-custom {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control-custom {
+        background-color: #d1d5db !important; /* Cinza claro dos inputs na imagem */
+        border: none;
+        border-radius: 8px;
+        height: 45px;
+        margin-bottom: 20px;
+        width: 100%;
+        color: #333;
+        padding: 10px;
+    }
+
+    .btn-outline-custom {
+        background: transparent;
+        border: 1px solid white;
+        color: white;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: 0.3s;
+        text-align: center;
+        width: 100%;
+        max-width: 250px;
+        cursor: pointer;
+        margin-bottom: 15px;
+    }
+
+    .btn-outline-custom:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .header-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    /* Estilo para o item de exclusão */
+    .delete-btn {
+        background: none;
+        border: none;
+        color: #ff4d4d;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-dark p-4 shadow-lg">
+                
+                <form action="/veiculo/cadastro" method="POST">
+                    <input type="hidden" name="id" value="{{id}}">
+
+                    <div class="mb-3">
+                        <label class="form-label text-white fs-5">Modelo</label>
+                        <input type="text" class="form-control input-custom" name="modelo" placeholder="Modelo" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-white fs-5">Placa</label>
+                        <input type="text" class="form-control input-custom" id="placa" name="placa" placeholder="XXX0X00" required>
+                    </div>
+
+                    <div id="container-combustiveis">
+                        <div class="combustivel-item border-bottom border-light border-opacity-10 pb-3 mb-3">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white">Consumo (KM/L)</label>
+                                    <input type="number" step="0.1" class="form-control input-custom" name="combustiveis[0][consumo]" placeholder="12.5" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-white">Preço (R$)</label>
+                                    <input type="number" step="0.01" class="form-control input-custom" name="combustiveis[0][preco]" placeholder="6.79" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-white">Combustível</label>
+                                <select class="form-select input-custom" name="combustiveis[0][nome]" required>
+                                    <option value="">Selecione um combustível</option>
+                                    {{#each busca}}
+                                        <option value="{{this.nome}}">{{this.nome}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="combustiveis_primario" value="0" required>
+
+                                    <input type="hidden" name="combustiveis[0][referencial]" value="0">
+                                    <label class="form-check-label text-white" for="primario0">É primário?</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="meuCheckbox" name="meuCheckbox" value="sim">
+                                    <label class="form-check-label text-white" for="meuCheckbox">Veículo Principal?</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-grid gap-3">
+                        <button class="btn btn-outline-custom w-50" type="button" onclick="adicionarCombustivel()">
+                            Adicionar combustível
+                        </button>
+                        <button class="btn btn-outline-custom w-50 py-2" type="submit">
+                            Salvar
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.combustiveisBack = {{{json busca}}};
+    window.combustiveis = 1;
+    window.ultimoId = 1;
+</script>
+<script src="/js/adicionarCombutivel.js"></script>
+<script src="/js/placa.js"></script>

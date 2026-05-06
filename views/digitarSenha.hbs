@@ -1,0 +1,150 @@
+<style>
+    /* 1. Cores e Fundo Centralizado */
+    .body-login-custom {
+        background-color: #001f3f !important; /* Cinza de fundo da sua imagem */
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+    }
+
+    /* 2. O Card Azul Escuro Arredondado */
+    .otimi-login-card {
+        background-color: #001f33 !important; /* Azul marinho profundo */
+        border-radius: 20px; /* Bordas bem arredondadas */
+        padding: 50px 40px;
+        width: 100%;
+        max-width: 480px; /* Largura controlada */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    /* 3. Tipografia das Labels (Maiúsculas) */
+    .form-label-custom {
+        font-size: 0.9rem;
+        text-transform: uppercase; /* Força maiúsculas conforme imagem */
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 8px;
+        display: block;
+        font-weight: bold;
+    }
+
+    /* 4. Inputs Brancos Arredondados */
+    .form-control-custom {
+        background-color: white !important; /* Branco conforme imagem */
+        border: none;
+        border-radius: 12px;
+        height: 50px;
+        color: #333;
+        padding: 10px 20px;
+        width: 100%;
+        margin-bottom: 25px;
+    }
+
+    /* 5. Botão Outline Branco */
+    .btn-outline-custom {
+        background: transparent;
+        border: 2px solid white; /* Borda mais grossa */
+        color: white;
+        border-radius: 12px;
+        height: 50px;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1.5px;
+        transition: 0.3s;
+        width: 100%;
+        max-width: 250px;
+        display: block;
+        margin: 0 auto;
+        cursor: pointer;
+    }
+
+    .btn-outline-custom:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 6. Alertas Estilizados */
+    .alert-custom {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid #ef4444;
+        color: #ef4444;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+     .logo-container_img {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .logo-container_img img {
+        width: 180px; /* Ajuste conforme sua imagem */
+    }
+
+
+</style>
+
+
+<div class="body-login-custom">
+    <div class="otimi-login-card text-center">
+        
+         <div class="mb-5">
+            <div class="logo-container_img">
+                <img src="/images/otimiroute _branco_png.png" alt="OtimiRoute">
+            </div>
+        </div>
+
+        <h3 class="mb-4" style="font-weight: 300; font-size: 1.2rem;">Redefinir Senha</h3>
+
+        {{!-- Mensagem de erro/sucesso --}}
+        {{#if mensagem}}
+            <div class="alert-custom mb-4">
+                {{mensagem}}
+            </div>
+        {{/if}}
+
+        <form action="/usuario/atualizarSenha" method="POST">
+            {{!-- Token oculto --}}
+            <input type="hidden" name="token" value="{{token}}">
+
+            <div class="text-start mb-3">
+                <label class="form-label-custom">Nova Senha</label>
+                <input class="form-control-custom" 
+                       type="password" 
+                       name="senha" 
+                       id="senha" 
+                       required>
+                
+                <div class="mt-1">
+                    <p id="necessario" style="font-size: 0.8rem; color: #ff4d4d;"></p>
+                </div>
+            </div>
+
+            <div class="text-start mb-4">
+                <label class="form-label-custom">Confirme a Senha</label>
+                <input class="form-control-custom" 
+                       type="password" 
+                       name="senha2" 
+                       required>
+            </div>
+
+            <div class="mt-4">
+                <button class="btn-outline-custom" type="submit">
+                    Atualizar Senha
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-4">
+            <a href="/usuario/login" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">
+                Voltar para o login
+            </a>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="/js/senhaAtualizar.js"></script>
