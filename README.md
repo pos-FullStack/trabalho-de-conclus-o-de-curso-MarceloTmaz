@@ -20,7 +20,7 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento em sua máqu
     ```bash
     git clone https://github.com/pos-FullStack/trabalho-de-conclus-o-de-curso-MarceloTmaz
 
-    cd otimirouter
+    cd trabalho-de-conclus-o-de-curso-MarceloTmaz
     ```
 
     2.  **Instalar as dependências:**
